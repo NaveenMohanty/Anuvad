@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="plugin-container">
+
+    <label>Choose Language</label>
+    <select id="lang">
+      <option value="hi">Hindi (हिंदी)</option>
+      <option value="ta">Tamil (தமிழ்)</option>
+      <option value="bn">Bengali (বাংলা)</option>
+      <option value="or">Odia (ଓଡ଼ିଆ)</option>
+      <option value="te">Telugu (తెలుగు)</option>
+      <option value="gu">Gujarati (ગુજરાતી)</option>
+      <option value="kn">Kannada (ಕನ್ನಡ)</option>
+      <option value="ml">Malayalam (മലയാളം)</option>
+      <option value="mr">Marathi (मराठी)</option>
+      <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+    </select>
+
+    <label>Original Text</label>
+    <textarea id="originalText" readonly>Welcome to our app! This is a sample text that will be translated.</textarea>
+
+    <label>Translated Preview</label>
+    <textarea id="translatedText" readonly>Translation will appear here when language is selected</textarea>
+
+    <button id="apply" class="btn-primary">Apply Translation</button>
+    <button id="reset" class="btn-secondary">← Back to Original</button>
+    <div id="status" class="status" style="display: none;"></div>
+    <p class="footer-text">
+      Select a text layer in Figma, choose a language, and preview the translation
+    </p>
+  </div>
+  <script src="script.js"></script>
+</body>
+
+</html>
