@@ -43,7 +43,7 @@ First, clone the repository to your local machine and navigate into the project 
 git clone https://github.com/NaveenMohanty/Anuvad
 
 # Navigate into the project directory
-cd indic-text-previewer
+cd Anuvad
 ```
 
 Next, install the necessary development dependencies.
