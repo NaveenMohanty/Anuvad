@@ -1,4 +1,5 @@
 # Anuvad Figma Plugin
+![WhatsApp Image 2025-08-06 at 9 52 35 PM](https://github.com/user-attachments/assets/edd935a0-1f66-4299-bd77-e4fec248344c)
 
 A Figma plugin that allows you to select a text layer and instantly preview how it would look when translated into various Indic languages. You can then apply the translated text back to your design with a single click.
 
