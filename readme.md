@@ -1,5 +1,5 @@
 # Anuvad - Make Your Design Multilingual in Seconds
-![WhatsApp Image 2025-08-06 at 9 52 35 PM](https://github.com/user-attachments/assets/edd935a0-1f66-4299-bd77-e4fec248344c)
+![WhatsApp Image 2025-08-06 at 9 52 35 PM](https://github.com/user-attachments/assets/8c07a874-c4a9-470c-8a5a-8de6e0764dab)
 
 🌍 Translate a single layer or your full frame in one click — Hindi, Tamil, Bengali, Japanese, French, Arabic, and more.
 
