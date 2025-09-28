@@ -1,42 +1,944 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            padding: 16px;
+            margin: 0;
+            background: white;
+            font-size: 14px;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .info {
+            background: #f0f9ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 14px;
+            text-align: center;
+            white-space: pre-line;
+            color: #1e40af;
+        }
+        
+        .language-selector {
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            box-sizing: border-box;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #0d1330;
+            box-shadow: 0 0 0 3px rgba(13, 19, 48, 0.1);
+        }
+        
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .language-option {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f1f1;
+            font-size: 14px;
+        }
+        
+        .language-option:hover {
+            background: #f8fafc;
+        }
+        
+        .language-option:last-child {
+            border-bottom: none;
+        }
+        
+        .language-option.selected {
+            background: #0d1330;
+            color: white;
+        }
+        
+        .selected-language {
+            margin-top: 8px;
+            padding: 8px;
+            background: #f0f9ff;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #1e40af;
+            font-weight: 500;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        select, textarea, button {
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+        
+        textarea {
+            padding: 12px;
+            min-height: 60px;
+            resize: none;
+            background: #f9f9f9;
+        }
+        
+        textarea.loading {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        textarea.error {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        
+        button {
+            padding: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary {
+            background: #0d1330;
+            color: white;
+            border: none;
+            margin-top: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #1e293b;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #333;
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background: #f8fafc;
+        }
+        
+        button:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            color: white;
+        }
+        
+        .btn-secondary:disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+        }
+        
+        label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+            color: #374151;
+        }
+        
+        .status {
+            font-size: 12px;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+            text-align: center;
+        }
+        
+        .status.info {
+            background: #dbeafe;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+        
+        .status.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .status.error {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+        
+        .text-list {
+            max-height: 120px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .text-item {
+            padding: 4px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .text-item:last-child {
+            border-bottom: none;
+        }
+        
+        .text-preview {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 2px;
+        }
+        
+        .text-translation {
+            color: #059669;
+            font-style: italic;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #f3f4f6;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #0d1330;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .speed-indicator {
+            font-size: 11px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+        
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .popular-languages {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        
+        .popular-lang-chip {
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
+        }
+        
+        .popular-lang-chip:hover {
+            background: #e2e8f0;
+        }
+        
+        .popular-lang-chip.active {
+            background: #0d1330;
+            color: white;
+        }
+    </style>
 </head>
-
 <body>
-  <div class="plugin-container">
+    <div class="container">
+        <div id="info" class="info">Select a text layer or frame</div>
+        
+        <div>
+            <label for="languageSearch">Choose Language</label>
+            <div class="language-selector">
+                <input 
+                    type="text" 
+                    id="languageSearch" 
+                    class="search-input" 
+                    placeholder="Search languages..." 
+                    autocomplete="off"
+                />
+                <div id="languageDropdown" class="language-dropdown hidden"></div>
+            </div>
+            <div id="selectedLanguage" class="selected-language hidden"></div>
+            
+            <div class="popular-languages">
+                <div class="popular-lang-chip" data-code="hi">Hindi</div>
+                <div class="popular-lang-chip" data-code="es">Spanish</div>
+                <div class="popular-lang-chip" data-code="fr">French</div>
+                <div class="popular-lang-chip" data-code="de">German</div>
+                <div class="popular-lang-chip" data-code="ja">Japanese</div>
+                <div class="popular-lang-chip" data-code="zh">Chinese</div>
+            </div>
+        </div>
 
-    <label>Choose Language</label>
-    <select id="lang">
-      <option value="hi">Hindi (हिंदी)</option>
-      <option value="ta">Tamil (தமிழ்)</option>
-      <option value="bn">Bengali (বাংলা)</option>
-      <option value="or">Odia (ଓଡ଼ିଆ)</option>
-      <option value="te">Telugu (తెలుగు)</option>
-      <option value="gu">Gujarati (ગુજરાતી)</option>
-      <option value="kn">Kannada (ಕನ್ನಡ)</option>
-      <option value="ml">Malayalam (മലയാളം)</option>
-      <option value="mr">Marathi (मराठी)</option>
-      <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
-    </select>
+        <div id="preview" class="hidden">
+            <div id="singleTextView">
+                <div>
+                    <label for="original">Original Text</label>
+                    <textarea id="original" readonly></textarea>
+                </div>
+                
+                <div>
+                    <label for="translated">Translation</label>
+                    <textarea id="translated" readonly></textarea>
+                </div>
+            </div>
+            
+            <div id="multiTextView" class="hidden">
+                <div>
+                    <label>All Texts (First 5 shown)</label>
+                    <div id="textList" class="text-list"></div>
+                </div>
+            </div>
+            
+            <div id="progressContainer" class="hidden">
+                <div id="progressText" style="font-size: 12px; color: #666; margin-bottom: 4px;"></div>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+            </div>
+            
+            <div id="speedIndicator" class="speed-indicator hidden"></div>
+            
+            <button id="apply" class="btn-primary" disabled>Apply Translation</button>
+            <button id="reset" class="btn-secondary" disabled>Reset to Original</button>
+            
+            <div id="status" class="status hidden"></div>
+        </div>
+    </div>
 
-    <label>Original Text</label>
-    <textarea id="originalText" readonly>Welcome to our app! This is a sample text that will be translated.</textarea>
+    <script>
+        // Comprehensive language list with ISO codes
+        const LANGUAGES = [
+            { code: 'af', name: 'Afrikaans' },
+            { code: 'sq', name: 'Albanian' },
+            { code: 'am', name: 'Amharic' },
+            { code: 'ar', name: 'Arabic' },
+            { code: 'hy', name: 'Armenian' },
+            { code: 'az', name: 'Azerbaijani' },
+            { code: 'eu', name: 'Basque' },
+            { code: 'be', name: 'Belarusian' },
+            { code: 'bn', name: 'Bengali' },
+            { code: 'bs', name: 'Bosnian' },
+            { code: 'bg', name: 'Bulgarian' },
+            { code: 'ca', name: 'Catalan' },
+            { code: 'ceb', name: 'Cebuano' },
+            { code: 'ny', name: 'Chichewa' },
+            { code: 'zh-cn', name: 'Chinese (Simplified)' },
+            { code: 'zh-tw', name: 'Chinese (Traditional)' },
+            { code: 'zh', name: 'Chinese' },
+            { code: 'co', name: 'Corsican' },
+            { code: 'hr', name: 'Croatian' },
+            { code: 'cs', name: 'Czech' },
+            { code: 'da', name: 'Danish' },
+            { code: 'nl', name: 'Dutch' },
+            { code: 'en', name: 'English' },
+            { code: 'eo', name: 'Esperanto' },
+            { code: 'et', name: 'Estonian' },
+            { code: 'tl', name: 'Filipino' },
+            { code: 'fi', name: 'Finnish' },
+            { code: 'fr', name: 'French' },
+            { code: 'fy', name: 'Frisian' },
+            { code: 'gl', name: 'Galician' },
+            { code: 'ka', name: 'Georgian' },
+            { code: 'de', name: 'German' },
+            { code: 'el', name: 'Greek' },
+            { code: 'gu', name: 'Gujarati' },
+            { code: 'ht', name: 'Haitian Creole' },
+            { code: 'ha', name: 'Hausa' },
+            { code: 'haw', name: 'Hawaiian' },
+            { code: 'iw', name: 'Hebrew' },
+            { code: 'he', name: 'Hebrew' },
+            { code: 'hi', name: 'Hindi' },
+            { code: 'hmn', name: 'Hmong' },
+            { code: 'hu', name: 'Hungarian' },
+            { code: 'is', name: 'Icelandic' },
+            { code: 'ig', name: 'Igbo' },
+            { code: 'id', name: 'Indonesian' },
+            { code: 'ga', name: 'Irish' },
+            { code: 'it', name: 'Italian' },
+            { code: 'ja', name: 'Japanese' },
+            { code: 'jw', name: 'Javanese' },
+            { code: 'kn', name: 'Kannada' },
+            { code: 'kk', name: 'Kazakh' },
+            { code: 'km', name: 'Khmer' },
+            { code: 'ko', name: 'Korean' },
+            { code: 'ku', name: 'Kurdish (Kurmanji)' },
+            { code: 'ky', name: 'Kyrgyz' },
+            { code: 'lo', name: 'Lao' },
+            { code: 'la', name: 'Latin' },
+            { code: 'lv', name: 'Latvian' },
+            { code: 'lt', name: 'Lithuanian' },
+            { code: 'lb', name: 'Luxembourgish' },
+            { code: 'mk', name: 'Macedonian' },
+            { code: 'mg', name: 'Malagasy' },
+            { code: 'ms', name: 'Malay' },
+            { code: 'ml', name: 'Malayalam' },
+            { code: 'mt', name: 'Maltese' },
+            { code: 'mi', name: 'Maori' },
+            { code: 'mr', name: 'Marathi' },
+            { code: 'mn', name: 'Mongolian' },
+            { code: 'my', name: 'Myanmar (Burmese)' },
+            { code: 'ne', name: 'Nepali' },
+            { code: 'no', name: 'Norwegian' },
+            { code: 'or', name: 'Odia (Oriya)' },
+            { code: 'ps', name: 'Pashto' },
+            { code: 'fa', name: 'Persian' },
+            { code: 'pl', name: 'Polish' },
+            { code: 'pt', name: 'Portuguese' },
+            { code: 'pa', name: 'Punjabi' },
+            { code: 'ro', name: 'Romanian' },
+            { code: 'ru', name: 'Russian' },
+            { code: 'sm', name: 'Samoan' },
+            { code: 'gd', name: 'Scots Gaelic' },
+            { code: 'sr', name: 'Serbian' },
+            { code: 'st', name: 'Sesotho' },
+            { code: 'sn', name: 'Shona' },
+            { code: 'sd', name: 'Sindhi' },
+            { code: 'si', name: 'Sinhala' },
+            { code: 'sk', name: 'Slovak' },
+            { code: 'sl', name: 'Slovenian' },
+            { code: 'so', name: 'Somali' },
+            { code: 'es', name: 'Spanish' },
+            { code: 'su', name: 'Sundanese' },
+            { code: 'sw', name: 'Swahili' },
+            { code: 'sv', name: 'Swedish' },
+            { code: 'tg', name: 'Tajik' },
+            { code: 'ta', name: 'Tamil' },
+            { code: 'tt', name: 'Tatar' },
+            { code: 'te', name: 'Telugu' },
+            { code: 'th', name: 'Thai' },
+            { code: 'tr', name: 'Turkish' },
+            { code: 'tk', name: 'Turkmen' },
+            { code: 'uk', name: 'Ukrainian' },
+            { code: 'ur', name: 'Urdu' },
+            { code: 'ug', name: 'Uyghur' },
+            { code: 'uz', name: 'Uzbek' },
+            { code: 'vi', name: 'Vietnamese' },
+            { code: 'cy', name: 'Welsh' },
+            { code: 'xh', name: 'Xhosa' },
+            { code: 'yi', name: 'Yiddish' },
+            { code: 'yo', name: 'Yoruba' },
+            { code: 'zu', name: 'Zulu' }
+        ];
 
-    <label>Translated Preview</label>
-    <textarea id="translatedText" readonly>Translation will appear here when language is selected</textarea>
+        // Global state
+        let originalTexts = [];
+        let translatedTexts = [];
+        let currentSelectionType = 'none';
+        let textCount = 0;
+        let translationCache = new Map();
+        let isTranslating = false;
+        let selectedLanguage = { code: 'hi', name: 'Hindi' }; // Default to Hindi
+        let filteredLanguages = LANGUAGES;
+        
+        // Performance tracking
+        let translationStartTime = 0;
+        
+        // UI Elements
+        const info = document.getElementById('info');
+        const preview = document.getElementById('preview');
+        const languageSearch = document.getElementById('languageSearch');
+        const languageDropdown = document.getElementById('languageDropdown');
+        const selectedLanguageDiv = document.getElementById('selectedLanguage');
+        const originalText = document.getElementById('original');
+        const translatedText = document.getElementById('translated');
+        const applyBtn = document.getElementById('apply');
+        const resetBtn = document.getElementById('reset');
+        const statusDiv = document.getElementById('status');
+        const singleTextView = document.getElementById('singleTextView');
+        const multiTextView = document.getElementById('multiTextView');
+        const textList = document.getElementById('textList');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressText = document.getElementById('progressText');
+        const progressFill = document.getElementById('progressFill');
+        const speedIndicator = document.getElementById('speedIndicator');
+        const popularLanguageChips = document.querySelectorAll('.popular-lang-chip');
 
-    <button id="apply" class="btn-primary">Apply Translation</button>
-    <button id="reset" class="btn-secondary">← Back to Original</button>
-    <div id="status" class="status" style="display: none;"></div>
-    <p class="footer-text">
-      Select a text layer in Figma, choose a language, and preview the translation
-    </p>
-  </div>
-  <script src="script.js"></script>
+        // Initialize language selector
+        function initializeLanguageSelector() {
+            updateSelectedLanguage();
+            
+            languageSearch.addEventListener('input', handleSearchInput);
+            languageSearch.addEventListener('focus', showDropdown);
+            languageSearch.addEventListener('blur', hideDropdownDelayed);
+            
+            // Popular language chips
+            popularLanguageChips.forEach(chip => {
+                chip.addEventListener('click', () => {
+                    const code = chip.getAttribute('data-code');
+                    const language = LANGUAGES.find(lang => lang.code === code);
+                    if (language) {
+                        selectLanguage(language);
+                    }
+                });
+            });
+            
+            // Click outside to close
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.language-selector')) {
+                    hideDropdown();
+                }
+            });
+        }
+
+        function handleSearchInput(e) {
+            const query = e.target.value.toLowerCase();
+            
+            if (query.length === 0) {
+                filteredLanguages = LANGUAGES;
+            } else {
+                filteredLanguages = LANGUAGES.filter(lang => 
+                    lang.name.toLowerCase().includes(query) ||
+                    lang.code.toLowerCase().includes(query)
+                );
+            }
+            
+            renderDropdown();
+            showDropdown();
+        }
+
+        function renderDropdown() {
+            if (!languageDropdown) return;
+            
+            languageDropdown.innerHTML = '';
+            
+            if (filteredLanguages.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.textContent = 'No languages found';
+                languageDropdown.appendChild(noResults);
+                return;
+            }
+            
+            // Show max 10 results
+            const languagesToShow = filteredLanguages.slice(0, 10);
+            
+            languagesToShow.forEach(language => {
+                const option = document.createElement('div');
+                option.className = 'language-option';
+                if (language.code === selectedLanguage.code) {
+                    option.classList.add('selected');
+                }
+                option.textContent = `${language.name} (${language.code})`;
+                option.addEventListener('mousedown', () => selectLanguage(language));
+                languageDropdown.appendChild(option);
+            });
+            
+            if (filteredLanguages.length > 10) {
+                const more = document.createElement('div');
+                more.className = 'language-option';
+                more.style.fontStyle = 'italic';
+                more.style.color = '#666';
+                more.textContent = `... and ${filteredLanguages.length - 10} more`;
+                languageDropdown.appendChild(more);
+            }
+        }
+
+        function selectLanguage(language) {
+            selectedLanguage = language;
+            languageSearch.value = '';
+            filteredLanguages = LANGUAGES;
+            updateSelectedLanguage();
+            updatePopularChips();
+            hideDropdown();
+            
+            if (originalTexts.length > 0) {
+                translate();
+            }
+        }
+
+        function updateSelectedLanguage() {
+            if (selectedLanguageDiv) {
+                selectedLanguageDiv.textContent = `Selected: ${selectedLanguage.name} (${selectedLanguage.code})`;
+                selectedLanguageDiv.classList.remove('hidden');
+            }
+        }
+
+        function updatePopularChips() {
+            popularLanguageChips.forEach(chip => {
+                const code = chip.getAttribute('data-code');
+                if (code === selectedLanguage.code) {
+                    chip.classList.add('active');
+                } else {
+                    chip.classList.remove('active');
+                }
+            });
+        }
+
+        function showDropdown() {
+            if (languageDropdown && filteredLanguages.length > 0) {
+                renderDropdown();
+                languageDropdown.classList.remove('hidden');
+            }
+        }
+
+        function hideDropdown() {
+            if (languageDropdown) {
+                languageDropdown.classList.add('hidden');
+            }
+        }
+
+        function hideDropdownDelayed() {
+            setTimeout(() => hideDropdown(), 150);
+        }
+
+        // Show status messages
+        function showStatus(message, type = 'info') {
+            if (statusDiv) {
+                statusDiv.textContent = message;
+                statusDiv.className = `status ${type}`;
+                statusDiv.classList.remove('hidden');
+                
+                if (type !== 'error') {
+                    setTimeout(() => statusDiv.classList.add('hidden'), 2000);
+                }
+            }
+            console.log(`[Anuvad] ${message}`);
+        }
+
+        // Update progress bar
+        function updateProgress(current, total, message = '') {
+            if (progressContainer && progressFill && progressText) {
+                const percentage = total > 0 ? Math.round((current / total) * 100) : 0;
+                progressFill.style.width = `${percentage}%`;
+                progressText.textContent = message || `${current}/${total} texts translated`;
+                
+                if (current === total && total > 0) {
+                    setTimeout(() => {
+                        progressContainer.classList.add('hidden');
+                    }, 800);
+                }
+            }
+        }
+
+        // Show speed indicator
+        function updateSpeedIndicator(textsCount, timeElapsed) {
+            if (speedIndicator && textsCount > 0) {
+                const avgTime = timeElapsed / textsCount;
+                const speed = avgTime < 1000 ? 'Fast' : avgTime < 2000 ? 'Normal' : 'Slow';
+                const timeText = `${(timeElapsed / 1000).toFixed(1)}s for ${textsCount} text${textsCount > 1 ? 's' : ''} (${speed})`;
+                
+                speedIndicator.textContent = timeText;
+                speedIndicator.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    speedIndicator.classList.add('hidden');
+                }, 3000);
+            }
+        }
+
+        // Listen for messages from Figma
+        window.addEventListener('message', (event) => {
+            const msg = event.data.pluginMessage;
+            if (!msg) return;
+
+            console.log('Received message:', msg.type);
+            
+            if (msg.type === 'show-selection') {
+                handleSelection(msg);
+            }
+        });
+
+        function handleSelection(msg) {
+            currentSelectionType = msg.selectionType;
+            textCount = msg.textCount || 0;
+            
+            if (msg.selectionType === 'text') {
+                info.textContent = 'Single text layer selected';
+                originalTexts = [msg.text || ''];
+                showPreview(msg.text || '', false);
+                translate();
+            } else if (msg.selectionType === 'frame') {
+                const frameName = msg.frameName || 'Unknown';
+                const count = msg.textCount || 0;
+                
+                info.textContent = `Frame "${frameName}" selected\n${count} text layer(s) found`;
+                originalTexts = msg.allTexts || [];
+                
+                if (originalTexts.length > 0) {
+                    showPreview(originalTexts[0] || '', originalTexts.length > 1);
+                    translate();
+                } else {
+                    hidePreview();
+                }
+            } else if (msg.selectionType === 'empty') {
+                info.textContent = 'No text layers found in selection';
+                hidePreview();
+            } else if (msg.selectionType === 'other') {
+                info.textContent = 'Please select a text layer or frame';
+                hidePreview();
+            } else {
+                info.textContent = 'Select a text layer or frame';
+                hidePreview();
+            }
+        }
+
+        function showPreview(text, isMultiple) {
+            originalText.value = text || '';
+            preview.classList.remove('hidden');
+            
+            if (isMultiple && originalTexts.length > 1) {
+                singleTextView.classList.add('hidden');
+                multiTextView.classList.remove('hidden');
+                renderTextList();
+            } else {
+                singleTextView.classList.remove('hidden');
+                multiTextView.classList.add('hidden');
+            }
+        }
+
+        function renderTextList() {
+            if (!textList || !originalTexts.length) return;
+            
+            textList.innerHTML = '';
+            
+            const textsToShow = originalTexts.slice(0, 5);
+            
+            textsToShow.forEach((text, index) => {
+                const item = document.createElement('div');
+                item.className = 'text-item';
+                
+                const preview = document.createElement('div');
+                preview.className = 'text-preview';
+                preview.textContent = `${index + 1}. ${text ? text.substring(0, 50) + (text.length > 50 ? '...' : '') : '(empty)'}`;
+                
+                const translation = document.createElement('div');
+                translation.className = 'text-translation';
+                translation.textContent = translatedTexts[index] ? 
+                    translatedTexts[index].substring(0, 50) + (translatedTexts[index].length > 50 ? '...' : '') : 
+                    'Not translated yet';
+                
+                item.appendChild(preview);
+                item.appendChild(translation);
+                textList.appendChild(item);
+            });
+            
+            if (originalTexts.length > 5) {
+                const more = document.createElement('div');
+                more.className = 'text-item';
+                more.style.fontStyle = 'italic';
+                more.style.color = '#666';
+                more.textContent = `... and ${originalTexts.length - 5} more`;
+                textList.appendChild(more);
+            }
+        }
+
+        function hidePreview() {
+            preview.classList.add('hidden');
+            progressContainer.classList.add('hidden');
+            speedIndicator.classList.add('hidden');
+            originalTexts = [];
+            translatedTexts = [];
+            statusDiv.classList.add('hidden');
+        }
+
+        // Optimized translation with parallel processing
+        async function translateTextBatch(texts, targetLang) {
+            const batchSize = 3;
+            const results = [];
+            
+            for (let i = 0; i < texts.length; i += batchSize) {
+                const batch = texts.slice(i, i + batchSize);
+                const batchPromises = batch.map(async (text, batchIndex) => {
+                    const globalIndex = i + batchIndex;
+                    
+                    if (!text || text.trim() === '') {
+                        return { index: globalIndex, translation: text };
+                    }
+
+                    const cacheKey = `${text.trim()}_${targetLang}`;
+                    if (translationCache.has(cacheKey)) {
+                        return { index: globalIndex, translation: translationCache.get(cacheKey) };
+                    }
+
+                    try {
+                        const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.trim())}&langpair=en|${targetLang}`;
+                        const response = await fetch(apiUrl);
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}`);
+                        }
+                        
+                        const data = await response.json();
+                        
+                        if (data.responseStatus === 200 && data.responseData && data.responseData.translatedText) {
+                            const translation = data.responseData.translatedText.trim();
+                            translationCache.set(cacheKey, translation);
+                            return { index: globalIndex, translation };
+                        } else {
+                            throw new Error(`API status: ${data.responseStatus}`);
+                        }
+                        
+                    } catch (error) {
+                        console.warn(`Translation failed for text ${globalIndex + 1}:`, error);
+                        return { index: globalIndex, translation: text };
+                    }
+                });
+                
+                const batchResults = await Promise.all(batchPromises);
+                results.push(...batchResults);
+                
+                if (texts.length > 1) {
+                    updateProgress(Math.min(i + batchSize, texts.length), texts.length);
+                    renderTextList();
+                }
+                
+                if (i + batchSize < texts.length) {
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+            }
+            
+            results.sort((a, b) => a.index - b.index);
+            return results.map(r => r.translation);
+        }
+
+        async function translate() {
+            if (originalTexts.length === 0 || isTranslating) {
+                return;
+            }
+
+            const targetLang = selectedLanguage.code;
+            const languageName = selectedLanguage.name;
+            
+            translationStartTime = Date.now();
+            console.log(`Starting translation to ${targetLang} for ${originalTexts.length} texts`);
+
+            if (originalTexts.length > 1) {
+                progressContainer.classList.remove('hidden');
+                updateProgress(0, originalTexts.length, `Starting translation to ${languageName}...`);
+            }
+
+            if (originalTexts.length === 1) {
+                translatedText.value = 'Translating...';
+                translatedText.classList.add('loading');
+                translatedText.classList.remove('error');
+            }
+            
+            applyBtn.disabled = true;
+            resetBtn.disabled = true;
+            isTranslating = true;
+            
+            showStatus(`Translating ${originalTexts.length} text(s) to ${languageName}...`);
+
+            try {
+                translatedTexts = await translateTextBatch(originalTexts, targetLang);
+
+                const totalTime = Date.now() - translationStartTime;
+                
+                if (originalTexts.length === 1 && translatedTexts[0]) {
+                    translatedText.value = translatedTexts[0];
+                    translatedText.classList.remove('loading');
+                }
+                
+                if (originalTexts.length > 1) {
+                    updateProgress(originalTexts.length, originalTexts.length, `Translation complete!`);
+                    renderTextList();
+                }
+                
+                applyBtn.disabled = false;
+                resetBtn.disabled = false;
+                
+                if (originalTexts.length > 1) {
+                    applyBtn.textContent = `Apply Translations (${originalTexts.length})`;
+                    resetBtn.textContent = `Reset All (${originalTexts.length})`;
+                } else {
+                    applyBtn.textContent = 'Apply Translation';
+                    resetBtn.textContent = 'Reset to Original';
+                }
+
+                updateSpeedIndicator(originalTexts.length, totalTime);
+                showStatus(`Translation complete! ${translatedTexts.length} text(s) translated.`, 'success');
+
+            } catch (error) {
+                console.error('Translation batch error:', error);
+                
+                if (originalTexts.length === 1) {
+                    translatedText.value = 'Translation failed. Please try again.';
+                    translatedText.classList.remove('loading');
+                    translatedText.classList.add('error');
+                }
+                
+                showStatus('Translation failed. Please check your connection.', 'error');
+                progressContainer.classList.add('hidden');
+            } finally {
+                isTranslating = false;
+            }
+        }
+
+        // Event listeners
+        applyBtn.addEventListener('click', () => {
+            if (translatedTexts.length > 0) {
+                console.log('Applying translations:', translatedTexts);
+                showStatus('Applying translations...', 'info');
+                
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'apply-translations',
+                        translations: translatedTexts
+                    }
+                }, '*');
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            if (originalTexts.length > 0) {
+                console.log('Resetting texts:', originalTexts);
+                showStatus('Resetting to original text...', 'info');
+                
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'reset-texts',
+                        originalTexts: originalTexts
+                    }
+                }, '*');
+            }
+        });
+
+        // Initialize
+        initializeLanguageSelector();
+        updatePopularChips();
+        console.log('Anuvad Plugin UI loaded - Worldwide Languages with Search');
+    </script>
 </body>
-
 </html>

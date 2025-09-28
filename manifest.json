@@ -1,6 +1,6 @@
 {
-  "name": "Anuvad",
-  "id": "anuvad",
+  "name": "Anuvad Simple",
+  "id": "anuvad-simple",
   "api": "1.0.0",
   "main": "code.js",
   "ui": "ui.html",
